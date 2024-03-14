@@ -44,9 +44,6 @@ while true; do
 
   if [ -z "$num_total" ]; then
     num_total=$(jq -r '.total' <<<"$result_json")
-    # fix: off by one error
-    num_total=$((num_total - 1))
-    #echo "num_total: $num_total"
   fi
 
   if [ -z "$last_date" ]; then
@@ -69,6 +66,8 @@ while true; do
   ((num_done >= num_total)) && break
 
   search_after=$(jq -r '.rows[-1].updated' <<<"$result_json")
+
+  [[ "$search_after" == "null" ]] && break
 
 done
 
