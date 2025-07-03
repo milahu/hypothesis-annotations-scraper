@@ -13,6 +13,9 @@ set -e
 
 # https://github.com/hypothesis/product-backlog/issues/566
 
+debug=false
+# debug=true
+
 user="$1"
 
 if [ -z "$user" ]; then
@@ -48,6 +51,8 @@ fi
 
 while true; do
 
+  step_time=$(date +%s.%N)
+
   url="$base_url"
 
   # https://github.com/hypothesis/h/issues/5191#issuecomment-419400695
@@ -61,6 +66,11 @@ while true; do
   fi
 
   result_json=$(curl -s -H "Authorization: Bearer $api_token" "$url")
+
+  if $debug; then
+    echo "$url" >debug.$step_time.url.txt
+    echo "$result_json" | jq >debug.$step_time.result_json.json
+  fi
 
   result_json_list+=("$result_json")
 
