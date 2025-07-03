@@ -23,8 +23,11 @@ if [ -z "$user" ]; then
   exit 1
 fi
 
+sort_field=updated
+# sort_field=created
+
 # https://r-world-devs.github.io/hypothesis/reference/search_annotations.html
-base_url="https://hypothes.is/api/search?sort=updated&limit=200&user=$user"
+base_url="https://hypothes.is/api/search?sort=$sort_field&limit=200&user=$user"
 
 num_done=0
 num_total=
@@ -97,7 +100,7 @@ while true; do
 
   ((num_done >= num_total)) && break
 
-  search_after=$(jq -r '.rows[-1].updated' <<<"$result_json")
+  search_after=$(jq -r ".rows[-1].$sort_field" <<<"$result_json")
 
   [[ "$search_after" == "null" ]] && break
 
