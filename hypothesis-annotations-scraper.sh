@@ -31,6 +31,18 @@ date=$(date --utc +"$date_format")
 
 result_json_list=()
 
+# https://h.readthedocs.io/en/latest/api/authorization/
+api_token=""
+api_token_file="$HOME/.config/hypothesis-annotations/api-token.txt"
+if [ -e "$api_token_file" ]; then
+  echo "using api token from $api_token_file"
+  api_token="$(< "$api_token_file")"
+else
+  echo "not using api token from $api_token_file"
+  echo "  note: without an api token, we can scrape only public data = only annotations, but no highlights"
+  echo "  you can get an api token at https://hypothes.is/account/developer"
+fi
+
 while true; do
 
   url="$base_url"
@@ -38,7 +50,7 @@ while true; do
     url+="&search_after=$search_after"
   fi
 
-  result_json=$(curl -s "$url")
+  result_json=$(curl -s -H "Authorization: Bearer $api_token" "$url")
 
   result_json_list+=("$result_json")
 
