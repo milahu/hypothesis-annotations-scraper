@@ -5,6 +5,8 @@
 set -e
 #set -x
 
+# https://github.com/hypothesis/h
+
 # https://h.readthedocs.io/en/latest/api-reference/v1/#tag/annotations/paths/~1search/get
 
 # https://jonudell.info/h/facet/
@@ -18,6 +20,7 @@ if [ -z "$user" ]; then
   exit 1
 fi
 
+# https://r-world-devs.github.io/hypothesis/reference/search_annotations.html
 base_url="https://hypothes.is/api/search?sort=updated&limit=200&user=$user"
 
 num_done=0
@@ -46,6 +49,13 @@ fi
 while true; do
 
   url="$base_url"
+
+  # https://github.com/hypothesis/h/issues/5191#issuecomment-419400695
+  # https://web.hypothes.is/blog/new-search-api-parameter-search_after/
+  # search_after is based on sort and order.
+  # sort defaults to the updated field, or the last time the annotation was updated,
+  # and order defaults to descending (so the most recently updated annotations will be found and returned first).
+  # search_after will return annotations that occur after the annotation whose sort field has the search_after’s value.
   if [ -n "$search_after" ]; then
     url+="&search_after=$search_after"
   fi
